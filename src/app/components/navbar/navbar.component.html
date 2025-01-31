@@ -1,0 +1,49 @@
+<header id="header" class="header d-flex align-items-center fixed-top">
+  <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+    <a href="/home" class="logo d-flex align-items-center">
+      <img src="assets/images/FreshParisLOGO.png" alt="Logo" class="logo" />
+    </a>
+
+    <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+    <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li class="navbar-link sidebar-link">
+          <a href="/home" class="nav-link">Home</a>
+        </li>
+
+        <li class="navbar-link sidebar-link">
+          <a href="/about" class="nav-link">About us</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Categories
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/equipements">Equipements</a></li>
+            <li><a class="dropdown-item" href="/green-spaces">Green spaces</a></li>
+            <li><a class="dropdown-item" href="/fontaines">Fountains</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item" ngbDropdown placement="bottom-end">
+          <a ngbDropdownToggle class="nav-link pro-pic" href="javascript:void(0)" aria-haspopup="true" aria-expanded="false">
+            <img src="assets/images/users/user1.jpg" alt="user" class="rounded-circle" width="31">
+            <span class="ms-2">Nour El Imen</span>
+          </a>
+          <ul class="dropdown-menu-right" ngbDropdownMenu>
+            <a class="dropdown-item" href="">My Profile</a>
+            <a class="dropdown-item" href="">My Balance</a>
+            <a class="dropdown-item" href="">Inbox</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="">Account Settings</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="">Logout</a>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
