@@ -598,7 +598,7 @@ button.mat-button {
 @media (max-width: 768px) {
   .search-container {
     flex-direction: column;
-    width: 90%;  /* Take more space on smaller screens */
+    width: 90%;
     align-items: flex-start;
   }
 

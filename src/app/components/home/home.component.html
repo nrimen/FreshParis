@@ -1,12 +1,113 @@
 <section class="hero text-center" style="background-image: url('/assets/images/img_6.png');">
+  <div class="home-container">
+    <input
+      id="search"
+      type="text"
+      class="form-control search-input"
+      [formControl]="searchControl"
+      [ngbTypeahead]="searchData"
+      [inputFormatter]="formatItem"
+      [resultFormatter]="formatItem"
+      (selectItem)="onSelectItem($event.item)"
+      (keyup.enter)="onEnter()"
+      placeholder="Search for equipment, green space, or fountain"
+    />
+
+  </div>
+  <ng-template #infoModal let-modal>
+    <div class="modal-body p-4">
+      <button type="button" class="btn-close text-white" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+
+      <div id="carouselExample" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+          <div *ngFor="let image of getImages(selectedItem); let i = index"
+               class="carousel-item"
+               [ngClass]="{ 'active': i === 0 }">
+            <img [src]="image" class="d-block w-100 carousel-img" alt="Image">
+
+          </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+        <div class="carousel-caption d-none d-md-block">
+          <h5 class="fw-bold text-white">
+            <i class="bi bi-info-circle"></i>
+            {{ selectedItem?.name || selectedItem?.nom || selectedItem?.modele }}
+          </h5>
+        </div>
+      </div>
+
+
+      <ng-container *ngIf="selectedItem?.stationcode">
+        <h6 class=" hero-subtitle" style="color: #5f259f"><i class="bi bi-bicycle"></i> Bike Station Details</h6>
+        <p><strong>🚏 Station Code:</strong> {{ selectedItem.stationcode }}</p>
+        <p><strong>🔄 Capacity:</strong> <span class="badge bg-success">{{ selectedItem.capacity }}</span></p>
+        <p><strong>🅿️ Available Docks:</strong> <span class="badge bg-warning">{{ selectedItem.numdocksavailable }}</span></p>
+        <p><strong>✅ Status:</strong> <span class="badge bg-dark">{{ selectedItem.is_installed }}</span></p>
+        <div class="modal-footer">
+          <button type="button" class="button" routerLink="/equipements">See more >> </button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedItem?.nsq_espace_vert">
+        <h6 lass=" hero-subtitle" style="color: #5f259f"><i class="bi bi-tree-fill"></i> Green Space Details</h6>
+        <p><strong>🌿 Type:</strong> {{ selectedItem.type }}</p>
+        <p><strong>📍 Address:</strong> {{ selectedItem.adresse }}</p>
+        <p><strong>🏙️ Arrondissement:</strong> <span class="badge bg-secondary">{{ selectedItem.arrondissement }}</span></p>
+        <p><strong>⏳ Open 24h:</strong>
+          <span class="badge" [ngClass]="{'bg-success': selectedItem.ouvert_24h === 'Oui', 'bg-danger': selectedItem.ouvert_24h === 'Non'}">
+        {{ selectedItem.ouvert_24h }}
+        </span>
+        </p>
+        <p><strong>🔥 Heatwave Opening:</strong>
+          <span class="badge" [ngClass]="{'bg-success': selectedItem.canicule_ouverture === 'Oui', 'bg-danger': selectedItem.canicule_ouverture === 'Non'}">
+        {{ selectedItem.canicule_ouverture }}
+        </span>
+        </p>
+        <div class="modal-footer">
+          <button type="button" class="button" routerLink="/green-spaces">See more >> </button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="selectedItem?.gid">
+        <h6 lass=" hero-subtitle" style="color: #5f259f"><i class="bi bi-droplet-fill"></i> Fountain Details</h6>
+        <p><strong>🚰 Type:</strong> {{ selectedItem.type_objet }}</p>
+        <p><strong>⚙️ Model:</strong> {{ selectedItem.modele }}</p>
+        <p><strong>🛤️ Street:</strong> {{ selectedItem.voie }}</p>
+        <p><strong>🏙️ Commune:</strong> {{ selectedItem.commune }}</p>
+        <p><strong>🚦 Availability:</strong>
+          <span class="badge" [ngClass]="{'bg-success': selectedItem.dispo === 'OUI', 'bg-danger': selectedItem.dispo === 'NON'}">
+        {{ selectedItem.dispo }}
+        </span>
+        </p>
+        <div class="modal-footer">
+          <button type="button" class="button" routerLink="/fontaines">See more >> </button>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+
+
+
+
   <h1 class="hero-title">Discover the Green Heart of Paris</h1>
-  <p class="hero-subtitle">Explore our wide range of
-    <p class="hero-subtitle">green spaces, fountains, and essential urban equipments.</p>
+  <p class="hero-subtitle">
+    Explore our wide range of
+  </p>
+  <p class="hero-subtitle">
+    green spaces, fountains, and essential urban equipments.
+  </p>
   <div class="buttons">
-    <<a href="/some-link" class="button">Learn More</a>
+    <a href="/some-link" class="button">Learn More</a>
     <a href="/another-link" class="button">Get Started</a>
   </div>
 </section>
+
 <section class="features-section">
   <h2 class="section-title text-center">What We Offer</h2>
   <div class="feature-cards">
@@ -15,12 +116,12 @@
       <h3>Green Spaces</h3>
       <p>Discover lush parks and gardens around the city.</p>
     </a>
-    <a routerLink="/fountains" class="feature-card">
+    <a routerLink="/fontaines" class="feature-card">
       <i class="fa fa-tint"></i>
       <h3>Fountains</h3>
       <p>Explore the beautiful water features scattered across Paris.</p>
     </a>
-    <a routerLink="/equipment" class="feature-card">
+    <a routerLink="/equipements" class="feature-card">
       <i class="fa fa-tools"></i>
       <h3>Equipment</h3>
       <p>Find essential public equipment like benches and recycling bins.</p>

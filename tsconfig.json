@@ -16,6 +16,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "types": ["node"],
     "skipLibCheck": true,
     "importHelpers": true,
     "target": "ES2022",

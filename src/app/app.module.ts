@@ -12,7 +12,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSortModule} from "@angular/material/sort";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { AppRoutingModule } from './app-routing.module';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { EquipementsComponent } from './tables/equipements/equipements.component';
@@ -23,6 +23,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatCardModule} from "@angular/material/card";
 import { HomeComponent } from './components/home/home.component';
 import { FooterComponent } from './components/footer/footer.component'; // Importing routing module
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,9 @@ import { FooterComponent } from './components/footer/footer.component'; // Impor
     CommonModule,
     MatSelectModule,
     MatCardModule,
+    NgbTypeaheadModule,
+    ReactiveFormsModule
+
 
   ],
   exports: [],
