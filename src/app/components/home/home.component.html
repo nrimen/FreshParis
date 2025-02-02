@@ -43,12 +43,43 @@
       </div>
 
 
-      <ng-container *ngIf="selectedItem?.stationcode">
-        <h6 class=" hero-subtitle" style="color: #5f259f"><i class="bi bi-bicycle"></i> Bike Station Details</h6>
-        <p><strong>🚏 Station Code:</strong> {{ selectedItem.stationcode }}</p>
-        <p><strong>🔄 Capacity:</strong> <span class="badge bg-success">{{ selectedItem.capacity }}</span></p>
-        <p><strong>🅿️ Available Docks:</strong> <span class="badge bg-warning">{{ selectedItem.numdocksavailable }}</span></p>
-        <p><strong>✅ Status:</strong> <span class="badge bg-dark">{{ selectedItem.is_installed }}</span></p>
+      <ng-container *ngIf="selectedItem?.identifiant">
+        <h6 class=" hero-subtitle" style="color: #5f259f"><i class="bi bi-bicycle"></i> Activity Details</h6>
+        <p><strong>📍 Address:</strong> {{ selectedItem.adresse }}</p>
+        <p><strong>💶 paid service:</strong> <span class="badge bg-success">{{ selectedItem.payant }}</span></p>
+        <p><strong>📈 Opening Status:</strong>
+          {{ selectedItem.statut_ouverture?.trim() === 'Ouvert' ? 'Open' :
+            selectedItem.statut_ouverture?.trim() === 'Eteint' ? 'Closed' : 'No Info' }}
+        </p>
+        <div *ngIf="selectedItem?.horaires_lundi || selectedItem?.horaires_mardi || selectedItem?.horaires_mercredi || selectedItem?.horaires_jeudi || selectedItem?.horaires_vendredi || selectedItem?.horaires_samedi || selectedItem?.horaires_dimanche">
+          <h3>🗓 Weekly Hours:</h3>
+          <div class="calendar">
+            <div class="day">
+              <strong>Lundi:</strong> {{ selectedItem?.horaires_lundi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Mardi:</strong> {{ selectedItem?.horaires_mardi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Mercredi:</strong> {{ selectedItem?.horaires_mercredi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Jeudi:</strong> {{ selectedItem?.horaires_jeudi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Vendredi:</strong> {{ selectedItem?.horaires_vendredi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Samedi:</strong> {{ selectedItem?.horaires_samedi || 'Closed' }}
+            </div>
+            <div class="day">
+              <strong>Dimanche:</strong> {{ selectedItem?.horaires_dimanche || 'Closed' }}
+            </div>
+          </div>
+        </div>
+        <p *ngIf="selectedItem?.geo_point_2d?.lat && selectedItem?.geo_point_2d?.lon">
+          <strong>Location:</strong> See on the map for exact adress.
+        </p>
         <div class="modal-footer">
           <button type="button" class="button" routerLink="/equipements">See more >> </button>
         </div>

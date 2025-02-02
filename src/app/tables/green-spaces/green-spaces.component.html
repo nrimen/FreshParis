@@ -30,17 +30,17 @@
 
         <ng-container matColumnDef="nom">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-          <td mat-cell *matCellDef="let row" (click)="selectRow(row)" class="clickable-row"> {{ row.nom }} </td>
+          <td mat-cell *matCellDef="let row" (click)="selectGreenSpace(row)" class="clickable-row"> {{ row.nom }} </td>
         </ng-container>
 
         <ng-container matColumnDef="type">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Type </th>
-          <td mat-cell *matCellDef="let row" (click)="selectRow(row)" class="clickable-row"> {{ row.type }} </td>
+          <td mat-cell *matCellDef="let row" > {{ row.type }} </td>
         </ng-container>
 
         <ng-container matColumnDef="adresse">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Address </th>
-          <td mat-cell *matCellDef="let row" (click)="selectRow(row)" class="clickable-row"> {{ row.adresse }} </td>
+          <td mat-cell *matCellDef="let row" > {{ row.adresse }} </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -49,20 +49,49 @@
 
       <mat-paginator [pageSizeOptions]="[10, 25, 100]" showFirstLastButtons></mat-paginator>
     </div>
-    <div class="details-card" *ngIf="selectedRow">
+    <div class="details-card" *ngIf="selectedGreenSpace">
       <mat-card class="mat-elevation-z4">
         <mat-card-header>
-          <mat-card-title>{{ selectedRow.nom }}</mat-card-title>
-          <mat-card-subtitle>{{ selectedRow.type }}</mat-card-subtitle>
+          <mat-card-title>{{ selectedGreenSpace.nom }}</mat-card-title>
+          <mat-card-subtitle>{{ selectedGreenSpace.type }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p><strong>📍 Address:</strong> <p>{{ selectedRow.adresse }},{{ selectedRow.arrondissement }}</p>
-          <p><strong>⏰ Open 24h:</strong> {{ selectedRow.ouvert_24h }}</p>
-          <p><strong>🔥 Open during heatwaves:</strong> {{ selectedRow.canicule_ouverture }}</p>
-          <p><strong>🌙 Open at night in summer:</strong> {{ selectedRow.ouverture_estivale_nocturne }}</p>
-          <p><strong>🛤️ Category:</strong> {{ selectedRow.categorie }}</p>
-          <p><strong>🌳 Vegetation Surface:</strong> <p>{{ selectedRow.surf_veget_sup8m_2024 }} m²</p>
+          <p><strong>📍 Address:</strong> <p>{{ selectedGreenSpace.adresse }},{{ selectedGreenSpace.arrondissement }}</p>
+          <p><strong>⏰ Open 24h:</strong> {{ selectedGreenSpace.ouvert_24h }}</p>
+          <p><strong>🔥 Open during heatwaves:</strong> {{ selectedGreenSpace.canicule_ouverture }}</p>
+          <p><strong>🌙 Open at night in summer:</strong> {{ selectedGreenSpace.ouverture_estivale_nocturne }}</p>
+          <p><strong>🛤️ Category:</strong> {{ selectedGreenSpace.categorie }}</p>
+          <p><strong>🌳 Vegetation Surface:</strong> <p>{{ selectedGreenSpace.surf_veget_sup8m_2024 }} m²</p>
+          <p><strong>Opening Period:</strong>
+            {{ selectedGreenSpace?.horaires_periode || 'No period details available' }}
+          </p>
 
+          <div *ngIf="selectedGreenSpace?.horaires_lundi || selectedGreenSpace?.horaires_mardi || selectedGreenSpace?.horaires_mercredi || selectedGreenSpace?.horaires_jeudi || selectedGreenSpace?.horaires_vendredi || selectedGreenSpace?.horaires_samedi || selectedGreenSpace?.horaires_dimanche">
+            <h3>🗓 Weekly Hours:</h3>
+            <div class="calendar">
+              <div class="day">
+                <strong>Lundi:</strong> {{ selectedGreenSpace?.horaires_lundi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Mardi:</strong> {{ selectedGreenSpace?.horaires_mardi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Mercredi:</strong> {{ selectedGreenSpace?.horaires_mercredi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Jeudi:</strong> {{ selectedGreenSpace?.horaires_jeudi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Vendredi:</strong> {{ selectedGreenSpace?.horaires_vendredi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Samedi:</strong> {{ selectedGreenSpace?.horaires_samedi || 'Closed' }}
+              </div>
+              <div class="day">
+                <strong>Dimanche:</strong> {{ selectedGreenSpace?.horaires_dimanche || 'Closed' }}
+              </div>
+            </div>
+          </div>
           <div class="map-container" *ngIf="mapUrl">
             <iframe width="100%" height="200" frameborder="0" style="border:0" allowfullscreen [src]="mapUrl"></iframe>
           </div>

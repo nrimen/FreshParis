@@ -27,13 +27,6 @@
   <div class="table-container mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
 
-      <ng-container matColumnDef="type_objet">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
-        <td mat-cell *matCellDef="let element" (click)="selectFountain(element)" class="clickable-row">
-          {{ element.type_objet }}
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="modele">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Model</th>
         <td mat-cell *matCellDef="let element" (click)="selectFountain(element)" class="clickable-row">
@@ -41,23 +34,30 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="type_objet">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell *matCellDef="let element" >
+          {{ element.type_objet }}
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="voie">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Street</th>
-        <td mat-cell *matCellDef="let element" (click)="selectFountain(element)" class="clickable-row">
+        <td mat-cell *matCellDef="let element" >
           {{ element.voie }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="commune">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Commune</th>
-        <td mat-cell *matCellDef="let element" (click)="selectFountain(element)" class="clickable-row">
+        <td mat-cell *matCellDef="let element" >
           {{ element.commune }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="dispo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Available</th>
-        <td mat-cell *matCellDef="let element" (click)="selectFountain(element)" class="clickable-row">
+        <td mat-cell *matCellDef="let element" >
           <span [ngClass]="{'available': element.dispo === 'OUI', 'not-available': element.dispo === 'NON'}">
             {{ element.dispo }}
           </span>

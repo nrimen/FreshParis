@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DataService } from '../../core/data.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import {Fountain} from "../../core/models/fountain";
 
 @Component({
   selector: 'app-fontaines',
@@ -11,8 +12,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./fontaines.component.css']
 })
 export class FontainesComponent implements OnInit {
-  displayedColumns: string[] = ['type_objet', 'modele', 'voie', 'commune', 'dispo'];
-  dataSource = new MatTableDataSource<any>();
+  displayedColumns: string[] = ['modele','type_objet','voie', 'commune', 'dispo'];
+  dataSource = new MatTableDataSource<Fountain>();
   uniqueCommunes: string[] = [];
   filterCommune: string = "";
   searchFilter: string = "";
@@ -25,10 +26,12 @@ export class FontainesComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.getFontaines().subscribe(
       (data) => {
-        console.log("Fetched Fontaines Data:", data);
-        this.dataSource.data = data;
-
-        this.uniqueCommunes = [...new Set(data.map((item: any) => item.commune))];
+        if (data && data.length > 0) {
+          this.dataSource.data = data;
+          this.uniqueCommunes = [...new Set(data.map((item: Fountain) => item.commune))];
+        } else {
+          console.warn("No fountain data received");
+        }
 
         this.cdr.detectChanges();
         this.dataSource.paginator = this.paginator;

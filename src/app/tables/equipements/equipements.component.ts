@@ -44,7 +44,6 @@ export class EquipementsComponent implements OnInit {
     this.dataService.getEquipements().subscribe(
       (data) => {
         if (data && Array.isArray(data) && data.length > 0) {
-          console.log('data',data);
           this.dataSource.data = data;
           this.dataSource.filter = '';
           this.dataSource.paginator = this.paginator;
@@ -103,7 +102,6 @@ export class EquipementsComponent implements OnInit {
   }
 
   selectEquipment(equipement: Equipement) {
-    console.log("Selected Equipment:", equipement);
     if (this.selectedEquipment === equipement) {
       this.selectedEquipment = null;
     } else {

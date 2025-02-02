@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit {
   getImages(item: any): string[] {
     if (!item) return [];
 
-    if (item?.stationcode) {
+    if (item?.identifiant) {
       return [
         'assets/images/equipements/img.png',
         'assets/images/equipements/img_1.png',
