@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DataService } from '../../core/data.service';
 import { DomSanitizer } from "@angular/platform-browser";
+import { Equipement } from "../../core/models/equipement";
 
 @Component({
   selector: 'app-equipements',
@@ -11,82 +12,103 @@ import { DomSanitizer } from "@angular/platform-browser";
   styleUrls: ['./equipements.component.css']
 })
 export class EquipementsComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'capacity', 'arrondissement', 'status'];
-  dataSource = new MatTableDataSource<any>();
+  displayedColumns: string[] = ['nom', 'type', 'adresse', 'statut_ouverture', 'payant'];
+  dataSource = new MatTableDataSource<Equipement>();
   uniqueCommunes: string[] = [];
   filterCommune: string = '';
   searchFilter: string = '';
-  bikesAvailable: any = null;
   mapUrl: any = null;
-  selectedEquipment: any = null;
+  selectedEquipment: Equipement | null = null;
 
   isTableView: boolean = true;
-  paginatedData: any[] = [];
-  pageSize: number = 10;
-  currentPage: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
+   filterStatutOuverture: string='';
+  private filterPayant: string='';
+  filterType: string = '';
+  uniqueTypes: string[] = [];
+  paginatedData: any[] = [];
+  pageSize: number = 10;
+  currentPage: number = 0;
   constructor(private dataService: DataService, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.loadEquipements();
+
+    this.dataSource.filterPredicate = this.createFilterPredicate();
+
+  }
+
+  loadEquipements(): void {
     this.dataService.getEquipements().subscribe(
       (data) => {
-        this.dataSource.data = data;
-        this.uniqueCommunes = [...new Set(data.map((item: any) => item.nom_arrondissement_communes))];
-        this.cdr.detectChanges();
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.updatePaginatedData();
+        if (data && Array.isArray(data) && data.length > 0) {
+          console.log('data',data);
+          this.dataSource.data = data;
+          this.dataSource.filter = '';
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.uniqueTypes = [...new Set(data.map(item => item.type))];
+          this.updatePaginatedData();
+          this.cdr.detectChanges();
+        } else {
+          console.error('Fetched data is empty or not an array:', data);
+        }
       },
       (error) => {
-        console.error('Error loading equipements data:', error);
+        console.error('Error loading data:', error);
       }
     );
+  }
 
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      const [searchText, selectedCommune] = filter.split('|');
+  createFilterPredicate() {
+    return (data: Equipement, filter: string): boolean => {
+      const [searchText, selectedCommune, statutOuverture, payant, type] = filter.split('|');
 
-      const name = data.name ? data.name.toLowerCase() : '';
-      const arrondissement = data.nom_arrondissement_communes ? data.nom_arrondissement_communes.toLowerCase() : '';
-      const matchesCommune = selectedCommune ? arrondissement === selectedCommune.toLowerCase() : true;
+      const name = data.nom ? data.nom.toLowerCase() : '';
+      const address = data.adresse ? data.adresse.toLowerCase() : '';
+      const statut = data.statut_ouverture ? data.statut_ouverture.toLowerCase() : '';
+      const isPayant = data.payant ? data.payant.toLowerCase() : '';
+      const equipementType = data.type ? data.type.toLowerCase() : '';
+
+      const matchesCommune = selectedCommune ? address.includes(selectedCommune.toLowerCase()) : true;
       const matchesText = name.includes(searchText);
 
-      return matchesCommune && matchesText;
+      const matchesStatut = statutOuverture ? statut.includes(statutOuverture) : true;
+      const matchesPayant = payant ? isPayant === payant : true;
+
+      const matchesType = type ? equipementType.includes(type) : true;
+
+      return matchesCommune && matchesText && matchesStatut && matchesPayant && matchesType;
     };
+  }
+
+  updatePaginatedData(): void {
+    if (!this.isTableView) {
+      const startIndex = this.currentPage * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      this.paginatedData = this.dataSource.filteredData.slice(startIndex, endIndex);
+    }
   }
 
   applyFilter(event: Event): void {
     this.searchFilter = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = `${this.searchFilter}|${this.filterCommune}`;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-    this.updatePaginatedData();
+    this.updateFilteredData();
   }
 
-  applyCommuneFilter(selectedCommune: string): void {
-    this.filterCommune = selectedCommune;
-    this.dataSource.filter = `${this.searchFilter}|${this.filterCommune}`;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-    this.updatePaginatedData();
+  applyTypeFilter(selectedType: string): void {
+    this.filterType = selectedType ? selectedType.toLowerCase() : '';
+    this.updateFilteredData();
   }
 
-  selectEquipment(equipement: any) {
+  selectEquipment(equipement: Equipement) {
+    console.log("Selected Equipment:", equipement);
     if (this.selectedEquipment === equipement) {
       this.selectedEquipment = null;
-      this.bikesAvailable = null;
     } else {
       this.selectedEquipment = equipement;
-      this.bikesAvailable = {
-        total: equipement.numbikesavailable || 0,
-        mechanical: equipement.mechanical || 0,
-        ebike: equipement.ebike || 0
-      };
-      if (equipement?.coordonnees_geo?.lat && equipement?.coordonnees_geo?.lon) {
+      if (equipement.geo_point_2d?.lat && equipement.geo_point_2d?.lon) {
         this.updateMapUrl(equipement);
       } else {
         this.mapUrl = null;
@@ -100,23 +122,29 @@ export class EquipementsComponent implements OnInit {
     this.updatePaginatedData();
   }
 
-  updatePaginatedData(): void {
-    if (!this.isTableView) {
-      const startIndex = this.currentPage * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      this.paginatedData = this.dataSource.filteredData.slice(startIndex, endIndex);
+
+  applyStatutOuvertureFilter(selectedStatutOuverture: string): void {
+    this.filterStatutOuverture = selectedStatutOuverture.toLowerCase();
+    this.updateFilteredData();
+  }
+
+
+  applyPayantFilter(selectedPayant: string): void {
+    this.filterPayant = selectedPayant.toLowerCase();
+    this.updateFilteredData();
+  }
+  updateFilteredData(): void {
+    const filterValue = `${this.searchFilter}|${this.filterCommune}|${this.filterStatutOuverture}|${this.filterPayant}|${this.filterType}`;
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
-  changePage(event: any): void {
-    this.currentPage = event.pageIndex;
-    this.updatePaginatedData();
-  }
-
-  private updateMapUrl(equipement: any) {
-    if (equipement?.coordonnees_geo?.lat && equipement?.coordonnees_geo?.lon) {
-      const url = `https://www.google.com/maps?q=${equipement.coordonnees_geo.lat},${equipement.coordonnees_geo.lon}&output=embed`;
-      this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    }
+  updateMapUrl(equipement: Equipement): void {
+    const lat = equipement.geo_point_2d?.lat;
+    const lon = equipement.geo_point_2d?.lon;
+    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`https://maps.google.com/maps?q=${lat},${lon}&hl=fr&z=14&output=embed`);
   }
 }
